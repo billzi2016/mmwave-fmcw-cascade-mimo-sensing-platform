@@ -1,0 +1,65 @@
+site_name: mmWave FMCW Cascade MIMO Sensing Platform
+site_description: Bilingual documentation for the mmWave FMCW radar processing and visualization project.
+site_url: https://example.com/mmwave-fmcw-cascade-mimo-sensing-platform/
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.highlight
+    - search.suggest
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: teal
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: folder
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: zh
+          name: 中文
+          build: true
+          nav_translations:
+            Home: 首页
+            Getting Started: 快速开始
+            System Overview: 系统概览
+            Processing Pipeline: 处理链路
+            Radar Concepts: 雷达概念
+            Project Notes: 项目说明
+            Documentation Site: 文档站点
+            Deployment Template: 部署模板
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - System Overview: system-overview.md
+  - Processing Pipeline: processing-pipeline.md
+  - Radar Concepts: radar-concepts.md
+  - Project Notes: project-notes.md
+  - Documentation Site:
+      - docs-site/index.md
+      - docs-site/deployment.md

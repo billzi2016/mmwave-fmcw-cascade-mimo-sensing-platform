@@ -1,1 +1,3 @@
-docs-site/
+docs-site/site/
+__pycache__/
+*.py[cod]
