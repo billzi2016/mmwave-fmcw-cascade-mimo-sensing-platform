@@ -1,3 +1,9 @@
+"""TI IWR2243 Cascade 处理结果渲染工具。
+
+本模块只负责把已经生成的 speed/angle 热力图保存为图片，或调用
+ffmpeg 把逐帧图片合成为视频；不参与雷达信号处理本身。
+"""
+
 from pathlib import Path
 import subprocess
 
@@ -8,7 +14,10 @@ from .config import CascadeProcessingConfig
 
 
 def save_speed_image(image: np.ndarray, frame_index: int, output_dir: Path, config: CascadeProcessingConfig) -> None:
-    """保存单帧 speed 热力图。"""
+    """保存单帧速度热力图。
+
+    横轴是速度，纵轴是距离；坐标轴尺度由配置中的 bin size 派生。
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(10, 8), dpi=200)
     plt.imshow(
@@ -33,7 +42,10 @@ def save_speed_image(image: np.ndarray, frame_index: int, output_dir: Path, conf
 
 
 def save_angle_image(image: np.ndarray, frame_index: int, output_dir: Path, config: CascadeProcessingConfig) -> None:
-    """保存单帧 angle 热力图。"""
+    """保存单帧角度热力图。
+
+    横轴固定为 -90 到 90 度，纵轴为距离，用于观察目标在角度域的分布。
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(10, 8), dpi=200)
     plt.imshow(
@@ -53,7 +65,10 @@ def save_angle_image(image: np.ndarray, frame_index: int, output_dir: Path, conf
 
 
 def render_video_from_frames(frame_dir: Path, output_path: Path, frame_rate: int = 10) -> None:
-    """使用 ffmpeg 将逐帧图片合成为视频。"""
+    """使用 ffmpeg 将逐帧图片合成为视频。
+
+    输入帧按 `%06d.png` 命名；函数只负责调用外部 ffmpeg，不检查编码器是否可用。
+    """
     command = [
         "ffmpeg",
         "-y",

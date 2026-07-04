@@ -1,3 +1,10 @@
+"""TI IWR2243 Cascade 离线处理主流水线。
+
+本文件把四芯片文件发现、校准加载、逐帧读取、Range/Doppler FFT、
+热力图生成、结构化保存和可选视频导出串成完整流程。实际信号处理细节
+分散在 raw_reader、calibration、fft 和 heatmap 等模块中。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -21,15 +28,26 @@ _WORKER_CALIBRATION: dict[str, np.ndarray] | None = None
 
 
 def _init_worker(config: CascadeProcessingConfig, calibration: dict[str, np.ndarray] | None) -> None:
+    """初始化多进程 worker 的只读上下文。
+
+    配置和校准矩阵对同一批处理任务是共享的，放入 worker 全局变量可以
+    避免每个 frame task 重复传输这些对象。
+    """
     global _WORKER_CONFIG, _WORKER_CALIBRATION
     _WORKER_CONFIG = config
     _WORKER_CALIBRATION = calibration
 
 
 def _process_frame(task: tuple[CaptureGroup, int, Path | None, Path, bool]) -> tuple[int, np.ndarray | None, np.ndarray]:
+    """处理单个 frame。
+
+    单帧处理顺序是：读取四片雷达数据、应用通道校准、执行 Range/Doppler
+    FFT、生成 angle heatmap 和可选 speed heatmap，并按配置保存图片。
+    """
     group, frame_index, speed_dir, angle_dir, export_data_only = task
     assert _WORKER_CONFIG is not None
 
+    # 读取并拼接 master/slave1/slave2/slave3 的同一帧，保证级联阵列时间对齐。
     adc_data = read_cascade_frame(group, frame_index, _WORKER_CONFIG)
     adc_data = apply_calibration(adc_data, _WORKER_CALIBRATION, _WORKER_CONFIG)
     doppler_fft_out = run_processing_chain(adc_data, _WORKER_CONFIG)
@@ -53,6 +71,11 @@ def _run_capture_group(
     config: CascadeProcessingConfig,
     calibration: dict[str, np.ndarray] | None,
 ) -> None:
+    """处理一个完整的四芯片采集组。
+
+    一个采集组对应同一 capture_id 下的四套 data/idx 文件。函数负责创建
+    输出目录、并行处理所有帧、按帧号排序聚合结果，并导出 H5/NPZ/图片/视频。
+    """
     frame_count = read_valid_frame_count(group.idx_files["master"])
     if config.frame_limit is not None:
         frame_count = min(frame_count, config.frame_limit)
@@ -74,10 +97,12 @@ def _run_capture_group(
     ]
 
     workers = config.resolve_workers()
+    # 帧与帧之间没有依赖，适合用进程池并行；结果回来后再按 frame_index 排序。
     with Pool(processes=workers, initializer=_init_worker, initargs=(config, calibration)) as pool:
         results = pool.map(_process_frame, tasks)
 
     results.sort(key=lambda item: item[0])
+    # angle 每帧一定存在；speed 受 enable_speed_output 控制，可能为 None。
     angle_frames = np.stack([item[2] for item in results], axis=0)
     speed_frames = None
     if config.enable_speed_output:
@@ -97,6 +122,7 @@ def _run_capture_group(
     )
 
     if config.render_video and not config.export_data_only:
+        # 视频只从已经写出的逐帧图片合成，不重新计算热力图。
         if speed_dir is not None:
             render_video_from_frames(speed_dir, capture_output_dir / "speed_heatmap.mp4")
         render_video_from_frames(angle_dir, capture_output_dir / "angle_heatmap.mp4")
@@ -108,6 +134,7 @@ def run_processing(
     calibration_file: Path | None,
     config: CascadeProcessingConfig,
 ) -> None:
+    """运行完整的级联雷达处理流程。"""
     capture_groups = discover_capture_groups(input_dir)
     if not capture_groups:
         raise FileNotFoundError(f"在 {input_dir} 中没有发现完整的 4-chip cascade 数据组。")
@@ -130,6 +157,7 @@ def run_processing(
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
+    """构建命令行参数解析器。"""
     parser = argparse.ArgumentParser(description="TI IWR2243 Cascade Python 处理链")
     parser.add_argument("--input-dir", required=True, type=Path, help="4-chip cascade 原始 bin 输入目录")
     parser.add_argument("--output-dir", required=True, type=Path, help="speed / angle 输出目录")
@@ -144,6 +172,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    """命令行入口。"""
     args = build_argument_parser().parse_args()
     config = CascadeProcessingConfig(
         workers=args.workers,

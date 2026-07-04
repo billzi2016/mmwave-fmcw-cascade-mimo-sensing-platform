@@ -1,3 +1,5 @@
+"""IWR6843 点云静态图和视频导出。"""
+
 from pathlib import Path
 
 from matplotlib.animation import FuncAnimation
@@ -14,7 +16,10 @@ def render_point_cloud(
     point_alpha: float,
     point_size: float,
 ) -> None:
-    """导出点云静态图或视频。"""
+    """导出点云静态图或视频。
+
+    `data` 形状通常为 `(frames, points, dims)`，前三列为 xyz，第 4 列为强度。
+    """
     if export_assets_only:
         return
 
@@ -34,6 +39,7 @@ def render_point_cloud(
         vmax=np.max(data[:, :, 3]),
     )
 
+    # 坐标轴使用整段点云的全局范围，避免视频中每帧自动缩放。
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
@@ -45,6 +51,7 @@ def render_point_cloud(
     cbar.set_label("Amplify")
 
     def update(frame: int) -> None:
+        """更新动画中的单帧点云。"""
         disp_index = data[frame, :, 3] != -1
         scatter._offsets3d = (
             data[frame, disp_index, 0],

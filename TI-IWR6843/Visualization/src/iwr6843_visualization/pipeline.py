@@ -1,3 +1,9 @@
+"""TI IWR6843 可视化主流水线。
+
+本文件读取 Processing 阶段生成的 H5，导出 range/speed/angle 热力图资产，
+并整理点云结果为 NPZ、PNG 或 MP4。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -17,6 +23,7 @@ from .speed_image import render_speed
 
 
 def _process_h5(args: tuple[Path, Path, VisualizationConfig]) -> None:
+    """处理单个 H5 结果文件。"""
     h5_path, output_dir, config = args
     stem = h5_path.stem
 
@@ -36,6 +43,7 @@ def _process_h5(args: tuple[Path, Path, VisualizationConfig]) -> None:
     file_output_dir = output_dir / stem
     file_output_dir.mkdir(parents=True, exist_ok=True)
 
+    # range 图一定存在；speed 图兼容 Processing 阶段未导出的情况。
     render_range(
         range_profiles,
         start_bins,
@@ -74,6 +82,7 @@ def _process_h5(args: tuple[Path, Path, VisualizationConfig]) -> None:
         config.export_assets_only,
     )
 
+    # 点云显示前先合并短时间窗口，再按强度筛选并聚类清理，最后固定点数。
     points_frames = merge_frame(points_frames, config.merge_frames)
     points_frames = threshold_segment(points_frames, config.threshold_percentile)
     points_frames = build_cluster(points_frames, config.target_count, single_process=config.render_video)
@@ -91,6 +100,7 @@ def _process_h5(args: tuple[Path, Path, VisualizationConfig]) -> None:
 
 
 def run_visualization(input_dir: Path, output_dir: Path, config: VisualizationConfig) -> None:
+    """运行 IWR6843 可视化流程。"""
     h5_files = sorted(input_dir.glob("*.h5"))
     if not h5_files:
         raise FileNotFoundError(f"在 {input_dir} 中没有找到 H5 文件。")
@@ -107,16 +117,19 @@ def run_visualization(input_dir: Path, output_dir: Path, config: VisualizationCo
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if config.render_video:
+        # 视频渲染涉及 ffmpeg 和逐帧写图，顺序执行更容易保证输出稳定。
         for h5_path in h5_files:
             _process_h5((h5_path, output_dir, config))
         return
 
     args_list = [(h5_path, output_dir, config) for h5_path in h5_files]
+    # 多个 H5 文件之间互不依赖，可以并行导出图片和 NPZ。
     with Pool(workers) as pool:
         pool.map(_process_h5, args_list)
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
+    """构建命令行参数解析器。"""
     parser = argparse.ArgumentParser(description="TI IWR6843 雷达可视化流水线")
     parser.add_argument("--input-dir", required=True, type=Path, help="H5 输入目录")
     parser.add_argument("--output-dir", required=True, type=Path, help="结果输出目录")
@@ -127,6 +140,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    """命令行入口。"""
     args = build_argument_parser().parse_args()
     config = VisualizationConfig(
         workers=args.workers,

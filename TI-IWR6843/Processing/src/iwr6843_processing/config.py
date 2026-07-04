@@ -1,10 +1,16 @@
+"""TI IWR6843 离线处理配置。
+
+本文件集中保存单芯片雷达处理链路的静态参数，包括 FFT 点数、虚拟阵列
+通道数量、点云候选数量、角度搜索范围、窗函数列表和并发设置。
+"""
+
 from dataclasses import dataclass, field
 from multiprocessing import cpu_count
 
 
 @dataclass(slots=True)
 class ProcessingConfig:
-    """处理阶段的静态配置。"""
+    """IWR6843 处理阶段静态配置。"""
 
     n_tx: int = 3
     n_rx: int = 4
@@ -26,7 +32,10 @@ class ProcessingConfig:
     workers: int | None = None
 
     def resolve_workers(self) -> int:
-        """默认使用一半 CPU，避免占满机器。"""
+        """确定实际使用的处理进程数。
+
+        用户显式指定 workers 时优先使用该值；否则默认使用一半 CPU，避免离线处理占满机器。
+        """
         if self.workers is not None and self.workers > 0:
             return self.workers
         return max(1, cpu_count() // 2)

@@ -1,3 +1,5 @@
+"""级联雷达点云图片和视频渲染工具。"""
+
 from pathlib import Path
 import subprocess
 
@@ -14,7 +16,11 @@ def save_point_cloud_image(
     data_range: tuple[float, float, float, float, float, float, float, float],
     point_size: float,
 ) -> None:
-    """保存单帧点云图片。"""
+    """保存单帧点云图片。
+
+    `point_cloud` 形状为 `(N, 4)`，前三列是 xyz，第四列是 SNR/强度。
+    `data_range` 来自整段序列，保证所有帧共用同一坐标轴和颜色范围。
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     x_min, x_max, y_min, y_max, z_min, z_max, snr_min, snr_max = data_range
 
@@ -26,6 +32,7 @@ def save_point_cloud_image(
     z = point_cloud[:, 2]
     snr = log_snr(point_cloud[:, 3])
 
+    # SNR 使用统一 vmin/vmax，避免不同帧颜色条自动缩放造成误判。
     scatter = ax.scatter(x, y, z, c=snr, cmap="viridis", s=point_size, vmin=snr_min, vmax=snr_max)
     fig.colorbar(scatter)
 
@@ -42,7 +49,10 @@ def save_point_cloud_image(
 
 
 def compute_point_cloud_range(point_cloud_frames: np.ndarray) -> tuple[float, float, float, float, float, float, float, float]:
-    """计算整段点云的统一显示范围。"""
+    """计算整段点云的统一显示范围。
+
+    统一范围可以让点云视频中的运动变化来自数据本身，而不是坐标轴自动缩放。
+    """
     x_min, x_max = np.min(point_cloud_frames[..., 0]), np.max(point_cloud_frames[..., 0])
     y_min, y_max = np.min(point_cloud_frames[..., 1]), np.max(point_cloud_frames[..., 1])
     z_min, z_max = np.min(point_cloud_frames[..., 2]), np.max(point_cloud_frames[..., 2])

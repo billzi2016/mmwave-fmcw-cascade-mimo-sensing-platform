@@ -1,3 +1,10 @@
+"""TI IWR2243 Cascade 的统一运行入口。
+
+该入口同时串联 Processing 和 Visualization 两条链路：先处理原始 4-chip
+bin 数据得到 speed/angle 结果，再读取 Cascade.mat 导出标准化点云结果。
+如果只需要其中一个阶段，也可以分别运行子目录下的 main.py。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -9,6 +16,7 @@ PROJECT_DIR = Path(__file__).resolve().parent
 PROCESSING_SRC = PROJECT_DIR / "Processing" / "src"
 VISUALIZATION_SRC = PROJECT_DIR / "Visualization" / "src"
 
+# 统一入口需要同时导入 Processing 和 Visualization 两套 src 包。
 for path in (PROCESSING_SRC, VISUALIZATION_SRC):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
@@ -20,6 +28,7 @@ from iwr2243_cascade_visualization.pipeline import run_visualization
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
+    """构建统一入口的命令行参数解析器。"""
     parser = argparse.ArgumentParser(description="TI IWR2243 Cascade 统一处理入口")
     parser.add_argument("--raw-input-dir", required=True, type=Path, help="4-chip cascade 原始 bin 输入目录")
     parser.add_argument("--processing-output-dir", required=True, type=Path, help="speed / angle 输出目录")
@@ -41,8 +50,10 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    """按顺序运行级联雷达处理链和点云可视化链。"""
     args = build_argument_parser().parse_args()
 
+    # 单独指定 worker 时优先使用阶段参数，否则共用 --workers。
     processing_workers = args.processing_workers if args.processing_workers is not None else args.workers
     visualization_workers = args.visualization_workers if args.visualization_workers is not None else args.workers
 
@@ -54,6 +65,7 @@ def main() -> None:
         export_data_only=args.processing_data_only,
         render_video=args.processing_video,
     )
+    # 第一阶段：从四芯片原始数据生成 speed/angle 热力图及聚合数据。
     run_processing(
         args.raw_input_dir,
         args.processing_output_dir,
@@ -67,6 +79,7 @@ def main() -> None:
         render_video=args.point_video,
         export_data_only=args.point_data_only,
     )
+    # 第二阶段：从 Cascade.mat 生成固定点数点云、图片和可选视频。
     run_visualization(
         args.point_cloud_mat,
         args.point_output_dir,

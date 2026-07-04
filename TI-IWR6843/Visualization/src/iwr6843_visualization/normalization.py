@@ -1,3 +1,5 @@
+"""可视化前的数值归一化工具。"""
+
 import numpy as np
 
 
@@ -6,5 +8,6 @@ def norm(data: np.ndarray) -> np.ndarray:
     data_min = np.min(data)
     data_max = np.max(data)
     if data_max == data_min:
+        # 常量矩阵没有动态范围，返回全零可以避免除零产生 NaN。
         return np.zeros_like(data, dtype=np.float32)
     return (data - data_min) / (data_max - data_min)
