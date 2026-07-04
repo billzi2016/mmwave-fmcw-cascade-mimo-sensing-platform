@@ -2,15 +2,15 @@
 
 ## 0. 本仓库执行版约束
 
-本次实现只允许修改 `docs-site/` 目录，因此 GitHub Actions 工作流先作为文档站点工程内的模板交付。
+本仓库当前采用“文档源码放在 `docs-site/`，部署工作流放在仓库根目录”的执行方式。原因是 GitHub Actions 只会识别仓库根目录 `.github/workflows/` 下的工作流文件，如果把工作流留在 `docs-site/.github/` 中，它只是普通文件，不会被 GitHub 自动执行。
 
 具体执行要求如下：
 
-- 工作流模板放在 `docs-site/.github/workflows/deploy-docs.yml`。
-- 模板内容应面向 GitHub Pages，包含检出、安装依赖、构建 MkDocs、上传 Pages 产物和部署步骤。
+- 工作流文件放在仓库根目录 `.github/workflows/deploy-docs.yml`。
+- 工作流内容面向 GitHub Pages，包含检出、安装依赖、构建 MkDocs、上传 Pages 产物和部署步骤。
 - 工作流触发路径应围绕 `docs-site/**` 设计，避免任意代码变更触发文档部署。
-- 模板应保持简洁，可在需要启用时复制到仓库根目录 `.github/workflows/`。
-- 本次不直接创建或修改仓库根目录 `.github/`，以满足只改 `docs-site/` 的边界要求。
+- 文档源码、MkDocs 配置、依赖文件、页面内容和静态资源保留在 `docs-site/` 中，避免和项目代码混在一起。
+- `docs-site/site/` 是本地构建产物，不进入 Git；GitHub Actions 会在远端重新构建并发布。
 - 工作流说明应和 MkDocs 站点结构匹配，默认从 `docs-site/` 执行构建。
 
 ## 1. 文档目的

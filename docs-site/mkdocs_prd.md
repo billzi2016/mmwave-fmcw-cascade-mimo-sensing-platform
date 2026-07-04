@@ -2,18 +2,19 @@
 
 ## 0. 本仓库执行版约束
 
-本次实现面向 `mmwave-fmcw-cascade-mimo-sensing-platform` 仓库，但所有改动只允许发生在 `docs-site/` 目录内。
+本次实现面向 `mmwave-fmcw-cascade-mimo-sensing-platform` 仓库，文档站点源码集中放在 `docs-site/` 目录内，GitHub Actions 工作流放在仓库根目录 `.github/workflows/`。这样既能保持文档工程独立，又能让 GitHub 正确识别自动部署配置。
 
 具体执行要求如下：
 
-- 文档站点源码、配置、依赖、页面内容、静态资源和部署模板都放在 `docs-site/` 中。
+- 文档站点源码、配置、依赖、页面内容和静态资源都放在 `docs-site/` 中。
 - 不修改仓库根目录的 `README.md`、`README.cn.md` 或其他外部说明文件。
 - 多语言内容必须按目录分层组织：英文内容放在 `docs-site/docs/en/`，中文内容放在 `docs-site/docs/zh/`。
 - 英文和中文页面应保持镜像结构，同一主题在 `en` 与 `zh` 下使用相同相对路径。
 - 页面内容要从简到难组织：先讲项目是什么、能看到什么结果，再讲目录结构、处理流程、核心概念和维护方式。
 - 文案要清晰、直接、信息充分，避免空泛口号和说教语气。
 - 初始版本应提供较完整的说明页，而不是只有标题和占位符。
-- GitHub Actions 在本次实现中作为 `docs-site/` 内的模板文件交付，避免触碰仓库根目录 `.github/`。
+- GitHub Actions 工作流文件应放在仓库根目录 `.github/workflows/deploy-docs.yml`，因为 GitHub 不会执行 `docs-site/.github/workflows/` 下的文件。
+- 本地构建产物 `docs-site/site/` 不进入 Git，远端发布时由 GitHub Actions 重新生成。
 
 ## 1. 文档目的
 

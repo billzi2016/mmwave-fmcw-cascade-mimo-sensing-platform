@@ -1,6 +1,9 @@
 site_name: mmWave FMCW Cascade MIMO Sensing Platform
 site_description: Bilingual documentation for the mmWave FMCW radar processing and visualization project.
-site_url: https://example.com/mmwave-fmcw-cascade-mimo-sensing-platform/
+site_url: https://billzi2016.github.io/mmwave-fmcw-cascade-mimo-sensing-platform/
+repo_url: https://github.com/billzi2016/mmwave-fmcw-cascade-mimo-sensing-platform
+repo_name: billzi2016/mmwave-fmcw-cascade-mimo-sensing-platform
+edit_uri: edit/main/docs-site/docs/
 
 docs_dir: docs
 site_dir: site

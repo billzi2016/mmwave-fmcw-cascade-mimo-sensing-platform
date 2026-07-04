@@ -11,6 +11,13 @@ The project focuses on offline workflows. Raw captures are processed into range,
 
 The code is useful when you want to understand the full path from raw radar samples to visual outputs. It does not treat the radar as a black box. The repository keeps the intermediate processing stages visible: file grouping, frame reconstruction, calibration, FFT processing, heatmap generation, point-cloud normalization, and final rendering.
 
+## Project Links
+
+- GitHub repository: <https://github.com/billzi2016/mmwave-fmcw-cascade-mimo-sensing-platform>
+- Documentation site: <https://billzi2016.github.io/mmwave-fmcw-cascade-mimo-sensing-platform/>
+
+Use the GitHub repository when you need source code, commits, issues, or the deployment workflow. Use this documentation site when you want a guided explanation of the radar workflow before opening implementation files.
+
 ## Who This Site Is For
 
 This site is written for several kinds of readers:
@@ -21,6 +28,19 @@ This site is written for several kinds of readers:
 - A maintainer who needs to extend the code without breaking the existing processing layout.
 
 The pages start with the visible outputs and folder structure. Later pages move into signal-processing concepts and implementation details.
+
+## How The GitHub Repository And This Site Work Together
+
+The GitHub repository is the source of truth for code. It contains the radar processing modules, visualization scripts, README files, and the MkDocs source used to build this site.
+
+The documentation site is the readable layer. It does not replace the code or README files. It gives a slower path through the project, especially for readers who are new to radar, FMCW, or the difference between processing and visualization.
+
+When reading both together, a practical workflow is:
+
+1. Open this site to understand the idea and terminology.
+2. Open the GitHub repository to inspect the matching files.
+3. Use the README files for concrete command examples.
+4. Return to this site when a processing step or parameter needs context.
 
 ## What You Can Learn Here
 
