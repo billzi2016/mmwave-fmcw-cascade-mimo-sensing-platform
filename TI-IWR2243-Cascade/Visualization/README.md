@@ -1,28 +1,26 @@
 # TI-IWR2243-Cascade Visualization
 
-该目录为 TI IWR2243 Cascade 点云可视化与标准化工程代码。
+This directory contains point-cloud visualization and standardized engineering code for TI IWR2243 Cascade.
 
-## 功能范围
+## Scope
 
-1. 读取 `Cascade.mat`
-2. 提取点云子空间
-3. 进行 SNR 权重采样与 DBSCAN 清理
-4. 输出固定点数点云 `npz`
-5. 导出逐帧点云图片与可选视频
+1. Read `Cascade.mat`
+2. Extract the point-cloud subspace
+3. Perform SNR-weighted sampling and DBSCAN cleanup
+4. Export fixed-size point clouds as `npz`
+5. Export per-frame point-cloud images and optional videos
 
-## 运行方式
+## Usage
 
 ```bash
-python main.py \
-  --input-mat /path/to/Cascade.mat \
-  --output-dir /path/to/output
+python main.py   --input-mat /path/to/Cascade.mat   --output-dir /path/to/output
 ```
 
-如果希望统一控制 `speed / angle / point`，优先使用项目根目录下的 `../main.py`。
+If you want unified control over `speed / angle / point`, prefer using `../main.py` from the project root.
 
-可选参数：
+Optional arguments:
 
-- `--workers`：绘图进程数，默认使用 CPU 核数的一半
-- `--target-points`：每帧保留的点数，默认 `2048`
-- `--render-video`：将点云图片交给 `ffmpeg` 合成为视频
-- `--export-data-only`：只导出 `npz`，不生成图片
+- `--workers`: number of plotting workers; defaults to half of the CPU cores
+- `--target-points`: number of points retained per frame; default is `2048`
+- `--render-video`: pass point-cloud images to `ffmpeg` and compose a video
+- `--export-data-only`: export only `npz` files without generating images

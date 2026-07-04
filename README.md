@@ -1,30 +1,30 @@
 # mmWave FMCW Cascade MIMO Sensing Platform
 
-本仓库整理了一个面向毫米波感知任务的 `FMCW` 雷达数据处理与结果展示工程，覆盖 `TI IWR2243 Cascade` 与 `TI IWR6843` 两类雷达方案。项目围绕离线数据处理、结果生成与可视化展示组织代码，适用于阵列感知、运动观测与点云结果分析等场景。
+This repository organizes an `FMCW` radar data processing and result visualization project for millimeter-wave sensing tasks. It covers two radar configurations: `TI IWR2243 Cascade` and `TI IWR6843`. The code is structured around offline data processing, result generation, and visualization, and is suitable for array sensing, motion observation, and point-cloud result analysis.
 
-从感知维度上看，该项目对应的是典型的 `4D` 毫米波感知问题，即从原始采样数据中联合恢复目标的距离 `Range`、速度 `Doppler`、水平角 `Azimuth` 与垂直角 `Elevation` 信息，并进一步组织为热力图、点云与配套可视化结果。
+From the sensing perspective, this project corresponds to a typical `4D` millimeter-wave sensing problem: jointly recovering target `Range`, `Doppler`, `Azimuth`, and `Elevation` information from raw sampled data, then organizing the results as heatmaps, point clouds, and related visual outputs.
 
-## 项目概述
+## Project Overview
 
-仓库包含两条核心技术路径：
+The repository contains two core technical paths:
 
 - `TI-IWR2243-Cascade`
-  - 面向四芯片级联毫米波雷达的数据处理与结果生成。
-  - 相比单芯片方案，级联链路需要先完成多芯片原始数据拼接、通道组织与校准，再进入后续频域处理阶段。
+  - Data processing and result generation for a four-chip cascaded millimeter-wave radar.
+  - Compared with a single-chip solution, the cascaded pipeline first needs to merge multi-chip raw data, organize channels, and perform calibration before entering subsequent frequency-domain processing stages.
 - `TI-IWR6843`
-  - 面向单芯片毫米波雷达的离线处理与结果可视化。
-  - 处理链路与展示链路拆分清晰，便于复用到不同采集批次和输出形式。
+  - Offline processing and result visualization for a single-chip millimeter-wave radar.
+  - The processing and visualization paths are clearly separated, making them easier to reuse across different capture batches and output formats.
 
-从工程组织上看，两套雷达代码都按 `Processing` 与 `Visualization` 两个阶段划分：
+From the engineering structure, both radar implementations are divided into `Processing` and `Visualization` stages:
 
 - `Processing`
-  - 负责原始采样读取、参数解析、数据重排、校准与频域处理。
+  - Handles raw sample loading, parameter parsing, data reshaping, calibration, and frequency-domain processing.
 - `Visualization`
-  - 负责将处理结果整理为热力图、点云或视频等更适合分析与展示的输出。
+  - Organizes processed results into heatmaps, point clouds, videos, and other outputs that are easier to analyze and present.
 
-这种结构使原始数据处理、结果导出和展示逻辑相互解耦，便于后续扩展不同雷达型号、采集任务和输出形式。
+This structure decouples raw data processing, result export, and visualization logic, making it easier to extend the project to different radar models, capture tasks, and output formats.
 
-## 仓库结构
+## Repository Structure
 
 ```text
 mmwave-fmcw-cascade-mimo-sensing-platform/
@@ -37,88 +37,88 @@ mmwave-fmcw-cascade-mimo-sensing-platform/
     └── Visualization/
 ```
 
-各目录职责如下：
+Directory responsibilities:
 
 - `DEMO`
-  - 演示素材与结果说明，包括阵列天线布局图、热力图视频、点云视频与配套可视化结果。
+  - Demo assets and result descriptions, including array antenna layout diagrams, heatmap videos, point-cloud videos, and related visualization results.
 - `TI-IWR2243-Cascade/Processing`
-  - 负责四芯片级联雷达原始数据读取、拼接、频率校准、相位校准，以及后续 `Range FFT`、`Doppler FFT` 和热力图结果导出。
+  - Handles raw data loading, merging, frequency calibration, phase calibration, `Range FFT`, `Doppler FFT`, and heatmap result export for the four-chip cascaded radar.
 - `TI-IWR2243-Cascade/Visualization`
-  - 用于组织级联雷达处理结果的展示与可视化逻辑。
+  - Provides display and visualization logic for cascaded radar processing results.
 - `TI-IWR6843/Processing`
-  - 负责单芯片雷达原始采样读取、参数解析、虚拟天线重建、距离/速度/角度域处理与点云相关结果导出。
+  - Handles raw sample loading, parameter parsing, virtual antenna reconstruction, range/speed/angle-domain processing, and point-cloud result export for the single-chip radar.
 - `TI-IWR6843/Visualization`
-  - 基于处理阶段输出结果，生成热力图、点云和视频等可视化内容。
+  - Generates heatmaps, point clouds, videos, and other visual outputs from processing-stage results.
 
-## 技术特点
+## Technical Features
 
-### 1. 兼容不同雷达形态
+### 1. Support for Different Radar Configurations
 
-仓库同时覆盖单芯片与四芯片级联两类 `FMCW` 雷达方案。两者在处理目标上保持一致，均服务于空间感知与运动信息提取；在实现细节上，`2243 cascade` 由于多芯片同步采集与阵列拼接要求更高，整体处理复杂度也更高。
+This repository covers both single-chip and four-chip cascaded `FMCW` radar configurations. Both serve the same sensing goal: extracting spatial and motion information. In implementation, the `2243 cascade` path is more complex because it requires synchronized multi-chip capture, array stitching, and stricter calibration.
 
-### 2. 面向离线处理的工程组织
+### 2. Offline Processing-Oriented Project Structure
 
-两套处理链路都以离线批处理为主，便于针对历史采集数据重复处理、参数调整和结果复现。代码入口清晰，处理依赖与模块边界明确，适合后续继续扩展实验流程或整理为标准化工具链。
+Both processing pipelines are designed mainly for offline batch processing. This makes it convenient to repeatedly process historical captures, tune parameters, and reproduce results. The entry points, dependencies, and module boundaries are clear, which also makes the project suitable for later extension into a standardized toolchain.
 
-### 3. 结果展示路径清晰
+### 3. Clear Result Visualization Path
 
-仓库将“处理”和“展示”拆分为独立阶段，既保留了信号处理过程中的中间结果，也方便将最终输出整理为更直观的热力图、点云和视频结果，用于分析、汇报和项目展示。
+The repository separates processing and visualization into independent stages. This preserves intermediate signal-processing results while making it convenient to convert final outputs into intuitive heatmaps, point clouds, and videos for analysis, reporting, and project demonstrations.
 
-### 4. 具备完整的雷达信号处理语义
+### 4. Complete Radar Signal Processing Semantics
 
-项目的核心价值不只是基于现成硬件获得结果，而是围绕原始采样数据建立可解释的处理链路。结合当前工程结构，项目体现的关键能力包括：
+The core value of this project is not only obtaining outputs from existing hardware, but also building an interpretable processing pipeline from raw sampled data. Based on the current project structure, the key capabilities include:
 
-- 基于 `Range FFT` 与 `Doppler FFT` 的距离域、速度域频谱处理
-- 基于 `CA-CFAR` 的目标检测与候选响应筛选
-- 基于虚拟阵列的 `AoA` 角度估计与空间信息恢复
-- 面向高分辨角度估计的 `MUSIC` 等子空间谱分析方法理解与实现
-- 面向阵列信号处理的 `beamforming` 相关方法扩展能力
+- Range-domain and velocity-domain spectral processing based on `Range FFT` and `Doppler FFT`
+- Target detection and candidate response filtering based on `CA-CFAR`
+- `AoA` angle estimation and spatial information recovery based on virtual arrays
+- Understanding and implementation of subspace spectral analysis methods such as `MUSIC` for high-resolution angle estimation
+- Extension capability for array signal processing methods such as `beamforming`
 
-其中，`beamforming` 相关方法属于本项目可支持的阵列处理能力范畴，用于补充说明对毫米波空间谱处理链路的理解；当前仓库展示重点仍以离线处理、热力图生成、点云输出与结果可视化为主。
+The `beamforming` methods mentioned here are part of the array-processing capabilities that this project can support. They are included to clarify the understanding of millimeter-wave spatial spectrum processing. The current repository still focuses on offline processing, heatmap generation, point-cloud export, and result visualization.
 
-## 处理链路概览
+## Processing Pipeline Overview
 
 ### TI-IWR2243-Cascade
 
-`TI IWR2243 Cascade` 的处理重点在于先完成四芯片级联数据的统一组织，再进入频域分析：
+The `TI IWR2243 Cascade` path focuses on organizing four-chip cascaded data into a unified representation before frequency-domain analysis:
 
-1. 读取 `4-chip cascade` 原始采样数据
-2. 完成多芯片数据拼接与通道映射
-3. 执行频率校准与相位校准
-4. 计算距离域与速度域频谱，并组织后续角度估计输入
-5. 结合阵列处理恢复空间信息，导出角度热力图、速度热力图及相关结果
+1. Read `4-chip cascade` raw sampled data
+2. Merge multi-chip data and map channels
+3. Perform frequency calibration and phase calibration
+4. Compute range-domain and velocity-domain spectra, then organize the input for subsequent angle estimation
+5. Recover spatial information through array processing and export angle heatmaps, speed heatmaps, and related results
 
 ### TI-IWR6843
 
-`TI IWR6843` 的处理链路以单芯片采样数据为基础，侧重标准化离线处理与结果可视化：
+The `TI IWR6843` path is based on single-chip sampled data and focuses on standardized offline processing and visualization:
 
-1. 读取参数文件与原始采样文件
-2. 完成拆帧与虚拟天线数据重建
-3. 执行距离、速度与角度域处理，并结合检测结果完成目标筛选
-4. 生成点云及中间结果文件
-5. 输出热力图、点云图像或视频
+1. Read parameter files and raw sample files
+2. Split frames and reconstruct virtual antenna data
+3. Perform range, velocity, and angle-domain processing, then filter targets using detection results
+4. Generate point clouds and intermediate result files
+5. Export heatmaps, point-cloud images, or videos
 
-## 技术亮点
+## Technical Highlights
 
-- 面向 `4D FMCW` 雷达感知任务组织处理链路，覆盖距离、速度、水平角与垂直角信息恢复。
-- 能够基于 `TI` 毫米波雷达硬件平台，对原始采样数据进行解析、拼接、校准与频域处理，而不是仅停留在结果调用层面。
-- 具备 `CA-CFAR`、`AoA`、`MUSIC` 等关键处理环节的实现与结果解读能力，并可扩展到 `beamforming` 等阵列处理方法。
-- 针对 `TI IWR2243 Cascade` 四芯片级联场景，能够处理多芯片数据拼接、通道映射与一致性校准问题，再进入高维阵列处理流程。
+- Organizes the processing pipeline for `4D FMCW` radar sensing tasks, covering recovery of range, velocity, azimuth, and elevation information.
+- Parses, merges, calibrates, and processes raw sampled data from `TI` millimeter-wave radar hardware instead of only consuming precomputed results.
+- Includes implementation and result interpretation capabilities for key steps such as `CA-CFAR`, `AoA`, and `MUSIC`, with extension potential for array-processing methods such as `beamforming`.
+- For the `TI IWR2243 Cascade` four-chip scenario, handles multi-chip data merging, channel mapping, and consistency calibration before entering high-dimensional array processing.
 
-## DEMO 内容
+## DEMO Contents
 
-`DEMO` 目录提供了与仓库代码对应的演示结果，主要包括：
+The `DEMO` directory provides demonstration results corresponding to this repository's code, mainly including:
 
-- `cascade 2243` 阵列天线位置图
-- 人体左右移动场景下的热力图结果
-- 多位置定点采集场景下的热力图结果
-- 点云运动可视化与配套 `SNR` 展示结果
+- `cascade 2243` array antenna position diagrams
+- Heatmap results for human lateral motion
+- Heatmap results for multi-position static captures
+- Point-cloud motion visualization and corresponding `SNR` visualization results
 
-该目录用于快速理解阵列结构与处理输出形式。具体文件说明见 [DEMO/README.md](/Users/bizi/Desktop/GitHub/FMCW/mmwave-fmcw-cascade-mimo-sensing-platform/DEMO/README.md)。
+This directory is intended for quickly understanding the array structure and output format. See [DEMO/README.md](DEMO/README.md) for detailed file descriptions.
 
-## 阅读建议
+## Reading Guide
 
-- 如果希望先理解项目结构，可从本页开始查看仓库整体分层。
-- 如果希望先看结果展示，可直接进入 `DEMO` 目录。
-- 如果关注四芯片级联处理逻辑，可优先阅读 `TI-IWR2243-Cascade/Processing`。
-- 如果关注单芯片离线处理与点云可视化链路，可优先阅读 `TI-IWR6843/Processing` 与 `TI-IWR6843/Visualization`。
+- Start from this page if you want to understand the overall repository structure.
+- Go directly to the `DEMO` directory if you want to inspect result examples first.
+- Read `TI-IWR2243-Cascade/Processing` first if you are interested in the four-chip cascaded processing logic.
+- Read `TI-IWR6843/Processing` and `TI-IWR6843/Visualization` first if you are interested in the single-chip offline processing and point-cloud visualization pipeline.

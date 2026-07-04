@@ -1,67 +1,67 @@
 # Demo Overview
 
-本目录汇总了 `FMCW` 毫米波雷达项目的代表性演示结果，用于展示阵列结构、运动观测输出以及点云与信噪比可视化效果。内容对应仓库中的级联雷达与单芯片雷达处理链路，是理解整体结果形式的快速入口。
+This directory collects representative demo results for the `FMCW` millimeter-wave radar project. It shows the array structure, motion observation outputs, and point-cloud and signal-to-noise-ratio visualization results. The contents correspond to the cascaded-radar and single-chip-radar processing pipelines in this repository, and provide a quick entry point for understanding the overall output formats.
 
-从结果类型上看，这些演示内容对应 `4D` 毫米波感知中的典型输出形式，即围绕目标的距离、速度、水平角与垂直角信息，进一步组织为热力图、点云与辅助分析结果。
+From the result perspective, these demos correspond to typical outputs in `4D` millimeter-wave sensing: range, velocity, azimuth, and elevation information around targets, further organized as heatmaps, point clouds, and auxiliary analysis results.
 
-## 内容概览
+## Content Overview
 
-当前演示结果分为两部分：
+The current demo results are divided into two parts:
 
-- `cascade 2243` 阵列天线布局图
-- 运动场景下的热力图与点云可视化视频
+- `cascade 2243` array antenna layout diagrams
+- Heatmap and point-cloud visualization videos for motion scenarios
 
-## 阵列布局
+## Array Layout
 
-两张 `png` 图片展示了 `TI IWR2243 Cascade` 阵列的天线位置布局。该级联方案由四片雷达协同工作，经过阵列组织后形成更高维度的观测能力。当前整理的阵列说明如下：
+The two `png` images show the antenna position layout of the `TI IWR2243 Cascade` array. This cascaded solution uses four radar chips working together, forming higher-dimensional observation capability after array organization. The summarized array configuration is:
 
-- 水平方向 86 根天线
-- 垂直方向 11 根天线
+- 86 antennas in the horizontal direction
+- 11 antennas in the vertical direction
 
-这一阵列结构为后续角度估计、空间分辨和点云生成提供了基础支撑，也是 `4D` 成像能力的重要前提。
+This array structure provides the foundation for angle estimation, spatial resolution, and point-cloud generation, and is an important prerequisite for `4D` imaging capability.
 
-相关文件：
+Related files:
 
 - `cascade_2243_antenna_layout_86h_11v_drawio.png`
-  - 阵列布局绘图版本，用于查看天线位置关系与整体排布结构。
+  - A drawn version of the array layout, used to inspect antenna position relationships and the overall arrangement.
 - `cascade_2243_antenna_layout_86h_11v_signal.png`
-  - 阵列布局信号示意图，用于辅助理解通道组织方式与阵列配置。
+  - A signal-oriented array layout diagram, used to help understand channel organization and array configuration.
 
-## 运动观测结果
+## Motion Observation Results
 
-### 人体左右移动场景
+### Human Lateral Motion Scenario
 
-以下两个视频对应人体左右移动场景下的处理结果，可用于观察角度域与速度域响应随运动过程的变化：
+The following two videos correspond to a human lateral-motion scenario and can be used to observe how angle-domain and velocity-domain responses change during motion:
 
 - `human_lateral_motion_angle_heatmap.mp4`
-  - 展示人体左右移动过程中的角度热力图变化。
+  - Shows angle heatmap changes during human lateral motion.
 - `human_lateral_motion_speed_heatmap.mp4`
-  - 展示人体左右移动过程中的速度热力图变化。
+  - Shows speed heatmap changes during human lateral motion.
 
-### 多位置定点采集场景
+### Multi-Position Static Capture Scenario
 
-以下两个视频对应多个位置的定点采集结果，用于展示目标在不同空间位置下的角度域与速度域分布特征：
+The following two videos correspond to static captures at multiple positions. They show the angle-domain and velocity-domain distribution characteristics of targets at different spatial locations:
 
 - `multi_position_static_capture_angle_heatmap.mp4`
-  - 展示多位置定点采集条件下的角度热力图。
+  - Shows the angle heatmap under multi-position static capture conditions.
 - `multi_position_static_capture_speed_heatmap.mp4`
-  - 展示多位置定点采集条件下的速度热力图。
+  - Shows the speed heatmap under multi-position static capture conditions.
 
-## 点云与信噪比可视化
+## Point Cloud and SNR Visualization
 
-以下两个视频用于展示点云结果及其配套的信噪比信息：
+The following two videos show point-cloud results and the corresponding signal-to-noise-ratio information:
 
 - `point_cloud_back_and_forth_motion.mp4`
-  - 展示目标往返运动过程中的点云变化。
+  - Shows point-cloud changes during back-and-forth target motion.
 - `point_cloud_snr_visualization.mp4`
-  - 展示与点云结果配套的 `SNR` 可视化结果。
+  - Shows the `SNR` visualization corresponding to the point-cloud results.
 
-点云与 `SNR` 结果结合后，可以更直观地观察目标运动轨迹、空间分布以及回波强度变化。
+Combining point-cloud and `SNR` results makes it easier to observe target trajectories, spatial distributions, and echo-strength changes.
 
-结合仓库中的处理链路，这些结果通常建立在距离域、速度域与角度域联合处理基础上，可进一步衔接目标检测、角度估计和空间谱分析等关键步骤。
+In the context of this repository's processing pipeline, these results are usually built on joint range-domain, velocity-domain, and angle-domain processing, and can further connect to key steps such as target detection, angle estimation, and spatial spectrum analysis.
 
-## 如何使用本目录
+## How to Use This Directory
 
-- 如果希望快速理解 `2243 cascade` 阵列结构，可优先查看两张天线布局图。
-- 如果希望查看运动感知效果，可优先查看热力图与点云视频。
-- 如果需要将结果用于项目展示或面试说明，本目录可以作为系统输出形式的直接示例。
+- Inspect the two antenna layout diagrams first if you want to quickly understand the `2243 cascade` array structure.
+- Inspect the heatmap and point-cloud videos first if you want to view motion-sensing results.
+- Use this directory as a direct example of system output formats if the results are needed for project presentations or interviews.

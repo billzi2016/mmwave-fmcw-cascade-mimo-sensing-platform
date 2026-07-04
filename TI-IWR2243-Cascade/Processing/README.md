@@ -1,48 +1,45 @@
 # TI-IWR2243-Cascade Processing
 
-该目录为 TI IWR2243 Cascade 毫米波雷达离线处理工程代码。
+This directory contains the offline processing code for the TI IWR2243 Cascade millimeter-wave radar.
 
-## 功能范围
+## Scope
 
-1. 读取 4-chip cascade 原始 bin 数据
-2. 完成四片数据拼接、频率校准、相位校准
-3. 计算 Range FFT 与 Doppler FFT
-4. 生成 `speed` 与 `angle` 热力图数据
-5. 导出逐帧图片、聚合 `npz` 与可选视频
+1. Read raw `bin` data from a 4-chip cascade capture
+2. Merge four-chip data and perform frequency and phase calibration
+3. Compute Range FFT and Doppler FFT
+4. Generate `speed` and `angle` heatmap data
+5. Export per-frame images, aggregated `npz` files, and optional videos
 
-## 目录说明
+## Directory Description
 
-- `main.py`：处理入口
-- `src/iwr2243_cascade_processing/`：处理模块
-- `requirements.txt`：运行依赖
+- `main.py`: processing entry point
+- `src/iwr2243_cascade_processing/`: processing modules
+- `requirements.txt`: runtime dependencies
 
-## 运行方式
+## Usage
 
 ```bash
-python main.py \
-  --input-dir /path/to/raw_capture \
-  --output-dir /path/to/output \
-  --calibration-file /path/to/calibration.mat
+python main.py   --input-dir /path/to/raw_capture   --output-dir /path/to/output   --calibration-file /path/to/calibration.mat
 ```
 
-如果希望统一控制 `speed / angle / point`，优先使用项目根目录下的 `../main.py`。
+If you want unified control over `speed / angle / point`, prefer using `../main.py` from the project root.
 
-可选参数：
+Optional arguments:
 
-- `--workers`：处理进程数，默认使用 CPU 核数的一半
-- `--frame-limit`：限制处理帧数
-- `--range-limit`：热力图显示的距离上限，默认 `2.5`
-- `--disable-speed`：关闭 `speed` 输出，仅保留 `angle`
-- `--export-data-only`：只导出 `npz`，不生成图片
-- `--render-video`：将逐帧图片交给 `ffmpeg` 合成为视频
+- `--workers`: number of processing workers; defaults to half of the CPU cores
+- `--frame-limit`: limit the number of frames to process
+- `--range-limit`: upper range limit for heatmap display; default is `2.5`
+- `--disable-speed`: disable `speed` output and keep only `angle`
+- `--export-data-only`: export only `npz` files without generating images
+- `--render-video`: pass per-frame images to `ffmpeg` and compose videos
 
-## 输出结果
+## Outputs
 
-每个采集批次会输出一个独立目录，包含：
+Each capture batch is exported to a separate directory containing:
 
-- 可选 `speed.h5`
+- Optional `speed.h5`
 - `angle.npz`
 - `speed_heatmap/`
 - `angle_heatmap/`
-- 可选 `speed_heatmap.mp4`
-- 可选 `angle_heatmap.mp4`
+- Optional `speed_heatmap.mp4`
+- Optional `angle_heatmap.mp4`

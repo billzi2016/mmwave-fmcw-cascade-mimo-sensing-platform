@@ -1,41 +1,41 @@
 # TI-IWR6843 Visualization
 
-该目录为 TI IWR6843 毫米波雷达结果可视化工程代码。
+This directory contains result visualization code for the TI IWR6843 millimeter-wave radar.
 
-## 目录说明
+## Directory Description
 
-- `main.py`：可视化入口
-- `src/iwr6843_visualization/`：可视化模块
-- `requirements.txt`：运行依赖
+- `main.py`: visualization entry point
+- `src/iwr6843_visualization/`: visualization modules
+- `requirements.txt`: runtime dependencies
 
-## 功能范围
+## Scope
 
-1. 读取处理阶段导出的 `h5`
-2. 导出距离、速度、AoA 角度热力图
-3. 读取或生成点云 `npz`
-4. 生成点云静态图或视频
+1. Read `h5` files exported by the processing stage
+2. Export range, speed, and AoA angle heatmaps
+3. Read or generate point-cloud `npz` files
+4. Generate static point-cloud images or videos
 
-## 并发策略
+## Concurrency Strategy
 
-- 生成图片和 `npz` 时默认使用 CPU 核数的一半进行多进程批处理
-- 生成视频时使用单进程顺序执行，并交给 `ffmpeg` 导出
+- Image and `npz` generation uses multiprocessing by default with half of the CPU cores
+- Video generation runs sequentially in a single process and delegates export to `ffmpeg`
 
-## 输出规则
+## Output Rules
 
-- `AoA / angle` 默认输出
-- `point cloud` 默认输出
-- 如果结果中存在 `speed_profiles`，则输出 `speed`
-- 如果结果中不存在 `speed_profiles`，则自动跳过 `speed` 可视化
+- `AoA / angle` is exported by default
+- `point cloud` is exported by default
+- If `speed_profiles` exists in the result, `speed` visualization is exported
+- If `speed_profiles` does not exist in the result, `speed` visualization is skipped automatically
 
-## 运行方式
+## Usage
 
-生成图片和 `npz`：
+Generate images and `npz` files:
 
 ```bash
 python main.py --input-dir /path/to/h5 --output-dir /path/to/output
 ```
 
-生成视频：
+Generate videos:
 
 ```bash
 python main.py --input-dir /path/to/h5 --output-dir /path/to/output --render-video
