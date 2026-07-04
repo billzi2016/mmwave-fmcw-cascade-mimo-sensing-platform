@@ -35,6 +35,7 @@ plugins:
           nav_translations:
             Home: 首页
             Getting Started: 快速开始
+            Radar Basics: 雷达基础
             System Overview: 系统概览
             Processing Pipeline: 处理链路
             Radar Concepts: 雷达概念
@@ -56,6 +57,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Radar Basics: radar-basics.md
   - System Overview: system-overview.md
   - Processing Pipeline: processing-pipeline.md
   - Radar Concepts: radar-concepts.md
