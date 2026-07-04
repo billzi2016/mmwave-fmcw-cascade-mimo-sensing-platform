@@ -1,5 +1,7 @@
 # mmWave FMCW Cascade MIMO Sensing Platform
 
+文档站点：https://billzi2016.github.io/mmwave-fmcw-cascade-mimo-sensing-platform/
+
 本仓库整理了一个面向毫米波感知任务的 `FMCW` 雷达数据处理与结果展示工程，覆盖 `TI IWR2243 Cascade` 与 `TI IWR6843` 两类雷达方案。项目围绕离线数据处理、结果生成与可视化展示组织代码，适用于阵列感知、运动观测与点云结果分析等场景。
 
 从感知维度上看，该项目对应的是典型的 `4D` 毫米波感知问题，即从原始采样数据中联合恢复目标的距离 `Range`、速度 `Doppler`、水平角 `Azimuth` 与垂直角 `Elevation` 信息，并进一步组织为热力图、点云与配套可视化结果。
