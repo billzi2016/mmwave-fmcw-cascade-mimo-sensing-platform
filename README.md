@@ -124,3 +124,11 @@ This directory is intended for quickly understanding the array structure and out
 - Go directly to the `DEMO` directory if you want to inspect result examples first.
 - Read `TI-IWR2243-Cascade/Processing` first if you are interested in the four-chip cascaded processing logic.
 - Read `TI-IWR6843/Processing` and `TI-IWR6843/Visualization` first if you are interested in the single-chip offline processing and point-cloud visualization pipeline.
+
+## Project Scope and Independence
+
+This repository provides independently developed tools for offline processing and visualization of raw data captured with supported millimeter-wave radar platforms. The processing pipeline starts from exported BIN data and associated configuration or parameter files. Publicly available hardware documentation is used to interpret data layouts and operating parameters, while the processing and visualization software is implemented in this repository using standard radar and signal-processing methods.
+
+This project uses publicly available files and parameters to support academic reproducibility consistent with practices commonly encouraged in ACM and IEEE publications, including reproduction of documented data-processing workflows and experimental results.
+
+Device and product names are used only to identify supported data sources and hardware configurations. This is an independent community project and is not affiliated with or endorsed by TI.
